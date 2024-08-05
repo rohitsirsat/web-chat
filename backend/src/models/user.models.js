@@ -50,10 +50,6 @@ const userSchema = new Schema(
       enum: AvailableSocialLogins,
       default: UserLoginType.EMAIL_PASSWORD,
     },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
-    },
     refreshToken: {
       type: String,
     },
