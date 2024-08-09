@@ -58,7 +58,6 @@ import { errorHandler } from "./middlewares/error.middlewares.js";
 import userRouter from "./routes/user.routes.js";
 import chatRouter from "./routes/chat.routes.js";
 import messageRouter from "./routes/message.routes.js";
-import { log } from "console";
 
 // // routes declaration
 // app.use("/api/v1/users", userRouter);
