@@ -70,6 +70,7 @@ const initializeSocketIO = (io) => {
       if (!user) {
         throw new ApiError(401, "Un-authorized handshake. Token is invalid");
       }
+
       socket.user = user; // mount the user object to the socket
 
       // We are creating a room with user id so that if user is joined but does not have any active chat going on.
