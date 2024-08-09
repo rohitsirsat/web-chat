@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UserLoginType, UserRolesEnum } from "../constants.js";
+import { UserRolesEnum } from "../constants.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -33,16 +33,17 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
-    throw new ApiError(409, "User with email or username already exists", []);
+    throw new ApiError(409, "User with email or username already exist", []);
   }
+
   const user = await User.create({
     email,
     password,
     username,
-    isEmailVerified: false,
     role: role || UserRolesEnum.USER,
   });
 
+  // removing password and refreshToken from the response
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
@@ -57,7 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         { user: createdUser },
-        "Users registered successfully"
+        "User registered successfully"
       )
     );
 });
@@ -93,10 +94,9 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
-  // TODO: Add more options to make cookie more secure and reliable
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
   };
 
   return res
@@ -106,7 +106,7 @@ const loginUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user: loggedInUser, accessToken, refreshToken }, // send access and refresh token in response if client decides to save them by themselves
+        { user: loggedInUser, accessToken, refreshToken }, // send the refresh and access token in response if client decides to save them by themselves
         "User logged in successfully"
       )
     );
@@ -125,7 +125,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
   };
 
   return res
@@ -162,7 +162,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
     const options = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
     };
 
     const { accessToken, refreshToken: newRefreshToken } =
